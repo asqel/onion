@@ -83,3 +83,14 @@ int json_object_add_null(json_value_t *obj, char *key) {
 	val.type = JSON_NULL;
 	return json_object_add(obj, key, &val);
 }
+
+json_value_t *json_object_get(json_value_t *obj, char *key) {
+	if (obj->type != JSON_OBJECT)
+		return  NULL;
+	for (int i = 0; i < obj->val.obj->len; i++) {
+		if (!strcmp(obj->val.obj->keys[i], key))
+			return &obj->val.obj->values[i];
+	return NULL;
+	}
+	return NULL;
+}
