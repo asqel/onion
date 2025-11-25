@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-int json_object_add(json_value_t *obj, char *key, json_value_t *val) {
+int json_object_add(json_value_t *obj, char *key, json_value_t *val, int replace_err) {
 	if (!obj || !key || !val)
 		return 1;
 	if (obj->type != JSON_OBJECT)
@@ -18,6 +18,8 @@ int json_object_add(json_value_t *obj, char *key, json_value_t *val) {
 	}
 	for (int i = 0; i < obj->val.obj->len; i++) {
 		if (!strcmp(obj->val.obj->keys[i], key)) {
+			if (replace_err)
+				return 1;
 			json_destroy(&obj->val.obj->values[i]);
 			obj->val.obj->values[i] = *val;
 			return 0;
@@ -49,14 +51,14 @@ int json_object_add(json_value_t *obj, char *key, json_value_t *val) {
 	return 0;
 }
 
-int json_object_add_num(json_value_t *obj, char *key, double num) {
+int json_object_add_num(json_value_t *obj, char *key, double num, int replace_err) {
 	json_value_t val = {0};
 	val.type = JSON_NUMBER;
 	val.val.num = num;
-	return json_object_add(obj, key, &val); 
+	return json_object_add(obj, key, &val, replace_err); 
 }
 
-int json_object_add_str(json_value_t *obj, char *key, char *str) {
+int json_object_add_str(json_value_t *obj, char *key, char *str, int replace_err) {
 	if (!str)
 		return 1;
 	char *new_str = strdup(str);
@@ -65,23 +67,23 @@ int json_object_add_str(json_value_t *obj, char *key, char *str) {
 	json_value_t val = {0};
 	val.type = JSON_STRING;
 	val.val.str = new_str;
-	int ret = json_object_add(obj, key, &val);
+	int ret = json_object_add(obj, key, &val, replace_err);
 	if (ret)
 		free(new_str);
 	return ret;
 }
 
-int json_object_add_bool(json_value_t *obj, char *key, int b) {
+int json_object_add_bool(json_value_t *obj, char *key, int b, int replace_err) {
 	json_value_t val = {0};
 	val.type = JSON_BOOL;
 	val.val.b = b;
-	return json_object_add(obj, key, &val);
+	return json_object_add(obj, key, &val, replace_err);
 }
 
-int json_object_add_null(json_value_t *obj, char *key) {
+int json_object_add_null(json_value_t *obj, char *key, int replace_err) {
 	json_value_t val = {0};
 	val.type = JSON_NULL;
-	return json_object_add(obj, key, &val);
+	return json_object_add(obj, key, &val, replace_err);
 }
 
 json_value_t *json_object_get(json_value_t *obj, char *key) {
@@ -90,7 +92,8 @@ json_value_t *json_object_get(json_value_t *obj, char *key) {
 	for (int i = 0; i < obj->val.obj->len; i++) {
 		if (!strcmp(obj->val.obj->keys[i], key))
 			return &obj->val.obj->values[i];
-	return NULL;
 	}
 	return NULL;
 }
+
+
