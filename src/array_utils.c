@@ -56,3 +56,13 @@ int json_array_append_bool(json_value_t *array, int b) {
 	val.val.b = b;
 	return json_array_append(array, &val);
 }
+
+json_value_t *json_array_get(json_value_t *obj, int idx) {
+	if (!obj)
+		return NULL;
+	if (obj->type != JSON_ARRAY)
+		return NULL;
+	if (idx < 0 || idx >= obj->val.arr->len)
+		return NULL;
+	return &obj->val.arr->values[idx];
+}

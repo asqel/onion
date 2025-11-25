@@ -59,5 +59,6 @@ int json_from_str(char *json, json_value_t *res);
 int json_from_file(char *path, json_value_t *res);
 
 json_value_t *json_object_get(json_value_t *obj, char *key);
+json_value_t *json_array_get(json_value_t *obj, int idx);
 
 #endif
