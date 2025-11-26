@@ -35,6 +35,8 @@ struct json_value_t {
 	} val;
 };
 
+#define JSON_CHECK_TYPE(X, TYPE) (X && X->type == TYPE)
+
 typedef struct json_value_t json_value_t;
 typedef struct json_object_t json_object_t;
 typedef struct json_array_t json_array_t;
@@ -59,6 +61,6 @@ int json_from_str(char *json, json_value_t *res);
 int json_from_file(char *path, json_value_t *res);
 
 json_value_t *json_object_get(json_value_t *obj, char *key);
-json_value_t *json_array_get(json_value_t *obj, int idx);
+json_value_t *json_array_get(json_value_t *obj, int idx)
 
 #endif
