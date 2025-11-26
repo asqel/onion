@@ -4,7 +4,7 @@ OBJ = $(SRC:.c=.o)
 CC = gcc
 LD = gcc
 
-CFLAGS = -Wall -Wextra -Iinclude -fPIC
+CFLAGS = -Wall -Wextra -Iinclude -fPIC -g
 LDFLAGS = -shared
 
 NAME = libonion

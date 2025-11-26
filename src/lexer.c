@@ -16,7 +16,7 @@ static int append_token(token_t  **tokens, int *len,  int type, int line) {
 }
 
 token_t *_I_lexe_json(char *text, int *len) {
-	int p = 0;
+	size_t p = 0;
 	token_t *tokens = NULL;
 	int line = 1;
 	while (text[p]) {
@@ -125,5 +125,6 @@ token_t *_I_lexe_json(char *text, int *len) {
 		*len = 0;
 		return NULL;
 	}
+	printf("%p\n", tokens);
 	return tokens;
 }
