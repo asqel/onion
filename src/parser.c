@@ -43,6 +43,7 @@ static json_value_t parse_object(token_t *tokens, int len) {
 	res.type = JSON_OBJECT;
 	res.val.obj = malloc(sizeof(json_object_t));
 	if (!res.val.obj) {
+		perror("malloc");
 		res.type = JSON_INVALID;
 		return res;
 	}
@@ -50,6 +51,7 @@ static json_value_t parse_object(token_t *tokens, int len) {
 	res.val.obj->values = NULL;
 	res.val.obj->keys = malloc(sizeof(char *));
 	if (!res.val.obj->keys) {
+		perror("malloc");
 		free(res.val.obj);
 		res.type = JSON_INVALID;
 		return res;
@@ -62,6 +64,7 @@ static json_value_t parse_object(token_t *tokens, int len) {
 	while (i < len) {
 		if (need_comma) {
 			if (tokens[i].type != TOKEN_CHAR || tokens[i].val.c != ',') {
+				fprintf(stderr, "Error: expected ',' on line %d\n", tokens[i].line);
 				json_destroy(&res);
 				break;
 			}
@@ -99,7 +102,7 @@ static json_value_t parse_object(token_t *tokens, int len) {
 		}
 		else if (tokens[i].type == TOKEN_STR) {
 			int err = 0;
-			if ((err =json_object_add_str(&res, key, strdup(tokens[i].val.str), 2))) {
+			if ((err = json_object_add_str(&res, key, strdup(tokens[i].val.str), 2))) {
 				if (err == 2)
 					fprintf(stderr, "Error: duplicate key %s on line %d\n", key, tokens[i].line);
 				json_destroy(&res);
@@ -109,13 +112,19 @@ static json_value_t parse_object(token_t *tokens, int len) {
 		}
 		else if (tokens[i].type == TOKEN_BOOL) {
 			if (tokens[i].val.c == 2) {
-				if (json_array_append_null(&res)) {
+				int err = 0;
+				if ((err = json_object_add_null(&res, key, 2))) {
+					if (err == 2)
+						fprintf(stderr, "Error: duplicate key %s on line %d\n", key, tokens[i].line);
 					json_destroy(&res);
 					break;
 				}
 			}
 			else {
-				if (json_array_append_bool(&res, tokens[i].val.c)) {
+				int err = 0;
+				if ((err = json_object_add_bool(&res, key, tokens[i].val.c, 2))) {
+					if (err == 2)
+						fprintf(stderr, "Error: duplicate key %s on line %d\n", key, tokens[i].line);
 					json_destroy(&res);
 					break;
 				}
@@ -200,6 +209,7 @@ static json_value_t parse_array(token_t *tokens, int len) {
 			if (tokens[i].type == TOKEN_CHAR && tokens[i].val.c == ',')
 				need_comma = 0;
 			else {
+				fprintf(stderr, "Error: expected ',' on line %d\n", tokens[i].line);
 				json_destroy(&res);
 				break;
 			}

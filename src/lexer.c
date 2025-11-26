@@ -125,6 +125,5 @@ token_t *_I_lexe_json(char *text, int *len) {
 		*len = 0;
 		return NULL;
 	}
-	printf("%p\n", tokens);
 	return tokens;
 }
