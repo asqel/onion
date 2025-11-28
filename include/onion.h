@@ -35,6 +35,8 @@ struct json_value_t {
 	} val;
 };
 
+#define JSON_CHECK_TYPE(X, TYPE) (X && X->type == TYPE)
+
 typedef struct json_value_t json_value_t;
 typedef struct json_object_t json_object_t;
 typedef struct json_array_t json_array_t;
