@@ -8,8 +8,10 @@ static char *read_file(const char *path, size_t *lp) {
 
 	FILE *f = fopen(path, "rb");
 
-	if (!f)
+	if (!f) {
+		perror(path);
 		return NULL;
+	}
 
 	fseek(f, 0, SEEK_END);
 	len = ftell(f);
