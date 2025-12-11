@@ -24,9 +24,11 @@ static char *read_file(const char *path, size_t *lp) {
 
 	if (!res || fread(res, 1, len, f) != len) {
 		free(res);
+		fclose(f);
 		return NULL;
 	}
 	res[len] = '\0';
+	fclose(f);
 	return res;
 }
 

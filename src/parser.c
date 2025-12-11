@@ -102,7 +102,7 @@ static json_value_t parse_object(token_t *tokens, int len) {
 		}
 		else if (tokens[i].type == TOKEN_STR) {
 			int err = 0;
-			if ((err = json_object_add_str(&res, key, strdup(tokens[i].val.str), 2))) {
+			if ((err = json_object_add_str(&res, key, tokens[i].val.str, 2))) {
 				if (err == 2)
 					fprintf(stderr, "Error: duplicate key %s on line %d\n", key, tokens[i].line);
 				json_destroy(&res);
@@ -224,7 +224,7 @@ static json_value_t parse_array(token_t *tokens, int len) {
 			i++;
 		}
 		else if (tokens[i].type == TOKEN_STR) {
-			if (json_array_append_str(&res, strdup(tokens[i].val.str))) {
+			if (json_array_append_str(&res, tokens[i].val.str)) {
 				json_destroy(&res);
 				break;
 			}
