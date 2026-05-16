@@ -63,4 +63,8 @@ int json_from_file(char *path, json_value_t *res);
 json_value_t *json_object_get(json_value_t *obj, char *key);
 json_value_t *json_array_get(json_value_t *obj, int idx);
 
+// if an element is a json array atoi will be applied
+json_value_t *json_vpath_get(json_value_t *obj, char **keys);
+json_value_t *json_path_get(json_value_t *obj, ...);
+
 #endif
