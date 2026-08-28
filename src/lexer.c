@@ -37,6 +37,10 @@ token_t *_I_lexe_json(char *text, int *len) {
 					break;
 				if (text[p] == '\\' && text[p + 1] == '"')
 					p++;
+				else if (text[p] == '\\' && text[p + 1] == '\\')
+					p++;
+				else if (text[p] == '\\' && !text[p + 1])
+					break;
 				p++;
 			}
 			if (text[p] != '"') {
@@ -55,6 +59,12 @@ token_t *_I_lexe_json(char *text, int *len) {
 			}
 			str[str_len] = '\0';
 			strncpy(str, text + start, str_len);
+			if (_I_lexe_escape_string(str, line)) {
+				free(str);
+				_I_json_free_tokens(tokens, *len);
+				*len = 0;
+				return NULL;
+			}
 			p++;
 			if (append_token(&tokens, len, TOKEN_STR, line) == -1) {
 				_I_json_free_tokens(tokens, *len);
@@ -66,16 +76,16 @@ token_t *_I_lexe_json(char *text, int *len) {
 			continue;
 		}
 		if (text[p] == '-' || isdigit(text[p])) {
-			char *end = NULL;
-			double val = strtod(&text[p], &end);
-			int diff = end - &text[p];
-			if (diff == 0) {
+			double val = 0;
+			size_t advanced = 0;
+			int ret = _I_lex_number(&text[p], &advanced, &val);
+			if (ret) {
 				_I_json_free_tokens(tokens, *len);
 				*len = 0;
 				fprintf(stderr, "Error: invalide number on line %d\n", line);
 				return NULL;
 			}
-			p += diff;
+			p += advanced;
 			if (append_token(&tokens, len, TOKEN_NUM, line) == -1) {
 				_I_json_free_tokens(tokens, *len);
 				*len = 0;
